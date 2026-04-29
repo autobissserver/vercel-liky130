@@ -1,8 +1,8 @@
 export const config = { runtime: "edge" };
 
-const TARGET_BASE = (process.env.TARGET_DOMAIN || "").replace(/\/$/, "");
+const TABAS = (process.env.TARGET_DOMAIN || "").replace(/\/$/, "");
 
-const STRIP_HEADERS = new Set([
+const STHADI = new Set([
   "host",
   "connection",
   "keep-alive",
@@ -19,19 +19,19 @@ const STRIP_HEADERS = new Set([
 ]);
 
 export default async function handler(req) {
-  if (!TARGET_BASE) {
+  if (!TABAS) {
     return new Response("Misconfigured: TARGET_DOMAIN is not set", { status: 500 });
   }
 
   try {
-    const pathStart = req.url.indexOf("/", 8);
-    const targetUrl =
-      pathStart === -1 ? TARGET_BASE + "/" : TARGET_BASE + req.url.slice(pathStart);
+    const PASRTR = req.url.indexOf("/", 8);
+    const TAGUL =
+      PASRTR === -1 ? TABAS + "/" : TABAS + req.url.slice(PASRTR);
 
-    const out = new Headers();
+    const tour = new Headers();
     let clientIp = null;
     for (const [k, v] of req.headers) {
-      if (STRIP_HEADERS.has(k)) continue;
+      if (STHADI.has(k)) continue;
       if (k.startsWith("x-vercel-")) continue;
       if (k === "x-real-ip") {
         clientIp = v;
@@ -41,16 +41,16 @@ export default async function handler(req) {
         if (!clientIp) clientIp = v;
         continue;
       }
-      out.set(k, v);
+      tour.set(k, v);
     }
-    if (clientIp) out.set("x-forwarded-for", clientIp);
+    if (clientIp) tour.set("x-forwarded-for", clientIp);
 
-    const method = req.method;
-    const hasBody = method !== "GET" && method !== "HEAD";
+    const metd = req.method;
+    const hasBody = metd !== "GET" && metd !== "HEAD";
 
-    return await fetch(targetUrl, {
-      method,
-      headers: out,
+    return await fetch(TAGUL, {
+      metd,
+      headers: tour,
       body: hasBody ? req.body : undefined,
       duplex: "half",
       redirect: "manual",
